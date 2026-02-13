@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="AppleAperture.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Цифровая фотография</title>
+</head>
+<body>
+    <div class="progress-container">
+        <div class="progress-bar" id="myBar"></div>
+    </div>
+
+    <div id="top">
+        <p id="pealkiri"><b>Цифровая фотография</b></p>
+        <p id="description">Фотосъемка и уроки работы с графическими редакторами</p>
+        <form id="searchBlock">
+            <input type="text" id="search" name="search" placeholder="&#x1F50E;&#xFE0E; Search">
+        </form> 
+    </div>
+
+    <div class="slider-container">
+        <div class="slide active"><img src="logo1.jpg" alt="Logo 1"></div>
+        <div class="slide"><img src="logo2.jpg" alt="Logo 2"></div>
+        <div class="slide"><img src="logo3.jpg" alt="Logo 3"></div>
+        <button class="btn prev">❮</button>
+        <button class="btn next">❯</button>
+    </div>
+    
+    <div id="menüü">
+        <table>
+            <tr>
+                <th><a href="#" class="white">О проекте</a></th>
+                <th><a href="#" class="white">Meet the GIMP</a></th>
+                <th><a href="#" class="white"> @FB </a></th>
+                <th><a href="#" class="white"> RSS </a></th>
+            </tr>
+        </table>
+    </div>
+
+    <div class="flex-container">
+        <div id="grey">
+            <p>Posted on <a href="#" class="blueLink"><b>14.01.2012</b></a> by <a href="#" class="blueLink"><b>SGalagan</b></a></p>
+        </div>
+        <div id="navigationBlock">
+            <ul>
+                <li><a href="#" class="blueLink">&#8592; <b>Previous</b></a></li>
+                <li><a href="#" class="blueLink"><b>Next</b> &#8594;</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="content">
+        <p id="topic"><b>Apple Aperture — первое знакомство</b></p>
+        <img src="AppIcon1.png" alt="Apple Aperture Icon" id="imageBlock">
+        <div id="tekst">
+            <p class="reveal">Я несколько раз переписывал вступление к этой статье. 
+            Дело в том, что я открываю новый этап в жизни своего блога — начинаю публиковать цикл статей о программе <a href="#" class="blueLink">Apple Aperture</a>.</p>
+            <p class="reveal">В удаленных вариантах вступления были приведены причины моего перехода на <span>Апертуру</span>, но я решил сегодня об этом не писать.
+            Если вам интересны эти рассуждения — просто оставляйте комментарии к статье.</p>
+            <p class="reveal">Сегодня я хочу сосредоточиться исключительно на программном продукте компании <span>Apple</span> — <a href="#" class="blueLink">Aperture</a>.</p>
+            <p class="reveal">Если кратко, то <a href="#" class="blueLink">Aperture</a> позволяет: <span>импортировать фотографии, организовать хранение, проводить рейтинговую оценку и улучшать снимки</span>.</p>
+            <p id="text3" class="reveal">В настоящее время доступна версия <a href="#" class="blueLink">Aperture 3</a>, и она является прямым конкурентом <span>Adobe Lightroom</span>. 
+            Меня радует в этом продукте его тесная интеграция с другими технологиями Apple.</p>
+        </div>
+    
+        <div id="imageBlock2">
+            <div class="img-zoom-container">
+                <img src="aperture-001.jpg" alt="Камера" id="image2">
+            </div>
+        </div>
+    </div> 
+    <div id="lightbox" class="lightbox">
+        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Увеличенное фото">
+    </div>
+
+    <button id="scrollTopBtn" title="Наверх">&#8593;</button>
+    
+    <script>
+        const menuItems = document.querySelectorAll('#menüü a');
+        menuItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                menuItems.forEach(link => link.classList.remove('active-link'));
+                this.classList.add('active-link');
+            });
+        });
+
+        const slides = document.querySelectorAll('.slide');
+        let slideIndex = 0;
+        let slideTimer;
+
+        function showSlide(n) {
+            slides[slideIndex].classList.remove('active');
+            slideIndex = (n + slides.length) % slides.length;
+            slides[slideIndex].classList.add('active');
+        }
+
+        function startTimer() { slideTimer = setInterval(() => showSlide(slideIndex + 1), 5000); }
+        function stopTimer() { clearInterval(slideTimer); }
+
+        document.querySelector('.next').onclick = () => { stopTimer(); showSlide(slideIndex + 1); startTimer(); };
+        document.querySelector('.prev').onclick = () => { stopTimer(); showSlide(slideIndex - 1); startTimer(); };
+        startTimer();
+
+        function initMagnifier(imgID, zoom) {
+            const img = document.getElementById(imgID);
+            if (!img) return;
+            const lens = document.createElement("div");
+            lens.className = "img-zoom-lens";
+            img.parentElement.insertBefore(lens, img);
+
+            img.onmousemove = (e) => {
+                const rect = img.getBoundingClientRect();
+                lens.style.display = "block";
+                let x = e.clientX - rect.left;
+                let y = e.clientY - rect.top;
+                lens.style.left = (x - lens.offsetWidth / 2) + "px";
+                lens.style.top = (y - lens.offsetHeight / 2) + "px";
+                lens.style.backgroundImage = `url('${img.src}')`;
+                lens.style.backgroundSize = (img.width * zoom) + "px " + (img.height * zoom) + "px";
+                lens.style.backgroundPosition = "-" + (x * zoom - lens.offsetWidth / 2) + "px -" + (y * zoom - lens.offsetHeight / 2) + "px";
+            };
+            img.onmouseleave = () => lens.style.display = "none";
+        }
+        window.onload = () => initMagnifier("image2", 2.5);
+
+        const lb = document.getElementById('lightbox');
+        const lbImg = lb.querySelector('img');
+        document.querySelectorAll('#imageBlock, #image2').forEach(img => {
+            img.onclick = () => {
+                lbImg.src = img.src;
+                lb.style.display = 'block';
+                setTimeout(() => lb.classList.add('active'), 10);
+            };
+        });
+        lb.onclick = () => {
+            lb.classList.remove('active');
+            setTimeout(() => lb.style.display = 'none', 300);
+        };
+
+        const topBtn = document.getElementById("scrollTopBtn");
+        window.onscroll = () => {
+            let winScroll = document.documentElement.scrollTop;
+            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            let scrolled = (winScroll / height) * 100;
+            document.getElementById("myBar").style.width = scrolled + "%";
+            topBtn.style.display = winScroll > 300 ? "block" : "none";
+        };
+        topBtn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        const obs = new IntersectionObserver(entries => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('show'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+    </script>
+</body>
+</html>
